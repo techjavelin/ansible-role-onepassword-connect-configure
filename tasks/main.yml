@@ -1,0 +1,26 @@
+---
+- name: Read in the Secrets Config for this Environment
+  shell: cat {{ op_secrets_json_file }}
+  register: secrets
+  delegate_to: localhost
+  tags: op_secrets
+
+- ansible.builtin.debug:
+    var: secrets.stdout
+  tags: op_secrets
+  when: op_secrets_debug
+
+- ansible.builtin.debug:
+    var: item
+  loop: "{{ secrets.stdout | from_json | community.general.json_query(secrets_query) }}"
+  vars:
+    secrets_query: "secrets.{{ op_secrets_environment }}"
+  tags: op_secrets
+  when: op_secrets_debug
+
+- name: Setup Ansible Secrets from OnePassword Connect 
+  include_tasks: set-secrets-from-op-connect.yml
+  loop: "{{ secrets.stdout | from_json | community.general.json_query(secrets_query) }}"
+  vars:
+    secrets_query: "secrets.{{ deployment_environment }}"
+  tags: op_secrets

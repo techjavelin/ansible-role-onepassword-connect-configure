@@ -1,0 +1,8 @@
+---
+# defaults file for ansible-role-onepassword-connect-configure
+op_secrets_json_file: 
+op_secrets_environment: dev
+op_secrets_vault_uuid: 
+op_secrets_connect_server_inventory_name: localhost
+op_secrets_secure_logging: true
+op_secrets_debug: false
